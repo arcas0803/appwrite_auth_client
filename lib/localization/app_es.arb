@@ -1,0 +1,16 @@
+{
+    "@@locale": "es",
+    "emailAlreadyExists": "El correo electrónico ya existe. Por favor, elija otro.",
+    "invalidCredentials": "Credenciales inválidas. Por favor, inténtelo de nuevo con credenciales válidas.",
+    "userDisabled": "El usuario ha sido deshabilitado. Por favor, póngase en contacto con el administrador.",
+    "userNotFound": "El usuario no se ha encontrado. Por favor, inténtelo de nuevo con credenciales válidas.",
+    "weakPassword": "La contraseña es demasiado débil. Por favor, elija una contraseña más fuerte con al menos 8 caracteres.",
+    "emailUnverified": "El correo electrónico no ha sido verificado. Por favor, verifique su correo electrónico.",
+    "unauthenticated": "No autenticado. Por favor, inicie sesión para continuar.",
+    "passwordMistmatch": "Las contraseñas no coinciden. Por favor, inténtelo de nuevo.",
+    "passwordRecentlyUsed": "La contraseña se ha utilizado recientemente. Por favor, elija una contraseña diferente.",
+    "passwordPersonalData": "La contraseña contiene datos personales. Por favor, elija una contraseña diferente.",
+    "userBlocked": "El usuario ha sido bloqueado. Por favor, póngase en contacto con el administrador.",
+    "passwordResetRequired": "Se requiere restablecimiento de contraseña. Por favor, restablezca su contraseña.",
+    "unknownError": "Ha ocurrido un error desconocido. Por favor, inténtelo de nuevo."
+}

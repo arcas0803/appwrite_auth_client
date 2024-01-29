@@ -1,0 +1,16 @@
+{
+    "@@locale": "en",
+    "emailAlreadyExists": "Email already exists. Please try again with a different email.",
+    "invalidCredentials": "Invalid credentials. Please try again with valid credentials.",
+    "userDisabled": "User has been disabled. Please contact the administrator.",
+    "userNotFound": "User not found. Please try again with a different email.",
+    "weakPassword": "Password is too weak. Please try again with a stronger password with at least 8 characters.",
+    "emailUnverified": "Email is not verified. Please verify your email.",
+    "unauthenticated": "Unauthenticated. Please login to continue.",
+    "passwordMistmatch": "Password mismatch. Please try again with the same password.",
+    "passwordRecentlyUsed": "Password has been recently used. Please try again with a different password.",
+    "passwordPersonalData": "Password contains personal data. Please try again with a different password.",
+    "userBlocked": "User has been blocked. Please contact the administrator.",
+    "passwordResetRequired": "Password reset required. Please reset your password.",
+    "unknownError": "Unknown error. Please try again later."
+}
