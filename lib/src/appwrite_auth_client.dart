@@ -99,4 +99,36 @@ abstract class AppwriteAuthClient {
     required String code,
     required String password,
   });
+
+  /// Send email to verify the given [email].
+  ///
+  /// Throws an [AuthFailure] if the send failed.
+  ///
+  Future<Result<void>> sendEmailVerification({
+    required String email,
+  });
+
+  /// Confirms the email verification with the given [code].
+  ///
+  /// Throws an [AuthFailure] if the confirm failed.
+  ///
+  Future<Result<void>> confirmEmailVerification({
+    required String code,
+  });
+
+  /// Google Sign In
+  ///
+  /// Returns a [Result] with the [AppwriteUser] if the sign in was successful.
+  ///
+  /// Throws an [AuthFailure] if the sign in failed.
+  ///
+  Future<Result<AppwriteUser>> signInWithGoogle();
+
+  /// Apple Sign In
+  ///
+  /// Returns a [Result] with the [AppwriteUser] if the sign in was successful.
+  ///
+  /// Throws an [AuthFailure] if the sign in failed.
+  ///
+  Future<Result<AppwriteUser>> signInWithApple();
 }

@@ -1,31 +1,62 @@
+enum AuthProvider {
+  email('email'),
+  google('google'),
+  apple('apple');
+
+  const AuthProvider(this.provider);
+
+  final String provider;
+}
+
+extension AuthProviderX on AuthProvider {
+  String get value => provider;
+
+  static AuthProvider fromString(String provider) {
+    switch (provider) {
+      case 'email':
+        return AuthProvider.email;
+      case 'google':
+        return AuthProvider.google;
+      case 'apple':
+        return AuthProvider.apple;
+      default:
+        return AuthProvider.email;
+    }
+  }
+}
+
 class AppwriteUser {
   final String userId;
   final String email;
   final String name;
+  final AuthProvider provider;
   final bool isVerified;
 
   AppwriteUser({
     required this.userId,
     required this.email,
     required this.name,
+    required this.provider,
     this.isVerified = false,
   });
 
   @override
   String toString() {
-    return 'AppwriteUser(userId: $userId, email: $email, name: $name, isVerified: $isVerified)';
+    return 'AppwriteUser(userId: $userId, email: $email, name: $name, provider: $provider, isVerified: $isVerified)';
   }
 
   AppwriteUser copyWith({
     String? userId,
     String? email,
     String? name,
+    AuthProvider? provider,
     bool? isVerified,
   }) {
     return AppwriteUser(
       userId: userId ?? this.userId,
       email: email ?? this.email,
       name: name ?? this.name,
+      provider: provider ?? this.provider,
       isVerified: isVerified ?? this.isVerified,
     );
   }
@@ -38,6 +69,7 @@ class AppwriteUser {
         other.userId == userId &&
         other.email == email &&
         other.name == name &&
+        other.provider == provider &&
         other.isVerified == isVerified;
   }
 
@@ -46,6 +78,7 @@ class AppwriteUser {
     return userId.hashCode ^
         email.hashCode ^
         name.hashCode ^
+        provider.hashCode ^
         isVerified.hashCode;
   }
 }

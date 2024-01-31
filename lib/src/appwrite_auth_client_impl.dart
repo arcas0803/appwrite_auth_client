@@ -74,6 +74,7 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
         return AppwriteUser(
           userId: userId,
           email: email,
+          provider: AuthProvider.email,
           name: name,
         );
       },
@@ -182,6 +183,7 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
           userId: result.$id,
           email: result.email,
           name: result.name,
+          provider: AuthProvider.email,
           isVerified: result.emailVerification,
         );
       },
@@ -470,6 +472,8 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
       () async {
         final result = await _account.get();
 
+        final session = await _account.getSession(sessionId: 'current');
+
         _telemetryOnSuccess?.call();
 
         _logger?.i('[SUCCESS] Fetched current user');
@@ -478,6 +482,7 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
           userId: result.$id,
           email: result.email,
           name: result.name,
+          provider: AuthProviderX.fromString(session.provider),
           isVerified: result.emailVerification,
         );
       },
@@ -515,8 +520,139 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
   }
 
   @override
-  Future<Result<void>> sendPasswordResetEmail({required String email}) {
-    // TODO: implement sendPasswordResetEmail
+  Future<Result<void>> sendPasswordResetEmail({required String email}) async {
+    _logger?.i('[START] Sending password reset email to: $email');
+    final connectivityResult =
+        await _connectivityClient.checkInternetConnection();
+
+    if (connectivityResult is Error) {
+      return Result.error(
+        NoInternetConnectionFailure(),
+      );
+    }
+    return Result.asyncGuard(
+      () async {
+        await _account.createRecovery(
+          email: email,
+          // TODO - Add url to appwrite_auth_client.dart
+          url: 'https://appwrite.io/recover',
+        );
+
+        _telemetryOnSuccess?.call();
+
+        _logger?.i('[SUCCESS] Sent password reset email to: $email');
+      },
+      onError: (e, s) {
+        late AuthFailure failure;
+
+        if (e is AppwriteException) {
+          if (e.message == 'Unauthorized') {
+            failure = UnauthenticatedFailure(
+              error: e.message ?? 'Unauthenticated',
+              stackTrace: s,
+            );
+          } else {
+            failure = ParseErrorUtil.parseError(exception: e);
+          }
+        } else {
+          failure = AuthUnknownFailure(
+            error: e.toString(),
+            stackTrace: s,
+          );
+        }
+
+        _logger?.e(
+          '[ERROR] Sending password reset email to: $email',
+          time: DateTime.now(),
+          error: e,
+          stackTrace: s,
+        );
+
+        _telemetryOnError?.call(failure);
+
+        return failure;
+      },
+    );
+  }
+
+  @override
+  Future<Result<void>> confirmEmailVerification({required String code}) {
+    // TODO: implement confirmEmailVerification
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> sendEmailVerification({required String email}) {
+    // TODO: implement sendEmailVerification
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<AppwriteUser>> signInWithApple() {
+    // TODO: implement signInWithApple
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<AppwriteUser>> signInWithGoogle() async {
+    _logger?.i('[START] Signing in with Google');
+
+    final connectivityResult =
+        await _connectivityClient.checkInternetConnection();
+
+    if (connectivityResult is Error) {
+      return Result.error(
+        NoInternetConnectionFailure(),
+      );
+    }
+
+    return Result.asyncGuard(
+      () async {
+        await _account.createOAuth2Session(
+          provider: 'google',
+        );
+
+        final result = await _account.get();
+
+        _telemetryOnSuccess?.call();
+
+        _logger?.i('''[SUCCESS] Signed in user with:
+                        email: ${result.email}
+                        userId: ${result.$id}
+                        name: ${result.name} 
+                       ''');
+
+        return AppwriteUser(
+          userId: result.$id,
+          email: result.email,
+          name: result.name,
+          provider: AuthProvider.google,
+          isVerified: result.emailVerification,
+        );
+      },
+      onError: (e, s) {
+        late AuthFailure failure;
+
+        if (e is AppwriteException) {
+          failure = ParseErrorUtil.parseError(exception: e);
+        } else {
+          failure = AuthUnknownFailure(
+            error: e.toString(),
+            stackTrace: s,
+          );
+        }
+
+        _logger?.e(
+          '[ERROR] Signing in with Google',
+          time: DateTime.now(),
+          error: e,
+          stackTrace: s,
+        );
+
+        _telemetryOnError?.call(failure);
+
+        return failure;
+      },
+    );
   }
 }
