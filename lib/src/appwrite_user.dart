@@ -31,6 +31,7 @@ class AppwriteUser {
   final String name;
   final AuthProvider provider;
   final bool isVerified;
+  final String imageUrl;
 
   AppwriteUser({
     required this.userId,
@@ -38,11 +39,12 @@ class AppwriteUser {
     required this.name,
     required this.provider,
     this.isVerified = false,
+    required this.imageUrl,
   });
 
   @override
   String toString() {
-    return 'AppwriteUser(userId: $userId, email: $email, name: $name, provider: $provider, isVerified: $isVerified)';
+    return 'AppwriteUser(userId: $userId, email: $email, name: $name, provider: $provider, isVerified: $isVerified, imageUrl: $imageUrl)';
   }
 
   AppwriteUser copyWith({
@@ -51,6 +53,7 @@ class AppwriteUser {
     String? name,
     AuthProvider? provider,
     bool? isVerified,
+    String? imageUrl,
   }) {
     return AppwriteUser(
       userId: userId ?? this.userId,
@@ -58,6 +61,7 @@ class AppwriteUser {
       name: name ?? this.name,
       provider: provider ?? this.provider,
       isVerified: isVerified ?? this.isVerified,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
@@ -70,7 +74,8 @@ class AppwriteUser {
         other.email == email &&
         other.name == name &&
         other.provider == provider &&
-        other.isVerified == isVerified;
+        other.isVerified == isVerified &&
+        other.imageUrl == imageUrl;
   }
 
   @override
@@ -79,6 +84,7 @@ class AppwriteUser {
         email.hashCode ^
         name.hashCode ^
         provider.hashCode ^
-        isVerified.hashCode;
+        isVerified.hashCode ^
+        imageUrl.hashCode;
   }
 }

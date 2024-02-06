@@ -18,6 +18,11 @@ dependencies:
     git:
       url: https://github.com/arcas0803/connectivity_client.git
       ref: main
+  appwrite_storage_client:
+    git:
+      url: https://github.com/arcas0803/appwrite_storage_client.git
+      ref: main
+      latest_commit: true
   flutter:
     sdk: flutter
   flutter_localizations:

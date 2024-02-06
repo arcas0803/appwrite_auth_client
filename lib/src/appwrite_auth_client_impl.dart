@@ -5,6 +5,7 @@ import 'package:appwrite_auth_client/src/appwrite_auth_client.dart';
 import 'package:appwrite_auth_client/src/appwrite_user.dart';
 import 'package:appwrite_auth_client/src/auth_failure.dart';
 import 'package:appwrite_auth_client/src/auth_failure_util.dart';
+import 'package:appwrite_storage_client/appwrite_storage_client.dart';
 import 'package:common_classes/common_classes.dart';
 import 'package:connectivity_client/connectivity_client.dart';
 import 'package:logger/logger.dart';
@@ -21,16 +22,26 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
 
   final ConnectivityClient _connectivityClient;
 
+  final AppwriteStorageClient _storageClient;
+
   AppwriteAuthClientImpl({
     Logger? logger,
     FutureOr<void> Function(Failure)? telemetryOnError,
     FutureOr<void> Function()? telemetryOnSuccess,
     required Client client,
+    required String bucketProfileImagesId,
   })  : _logger = logger,
         _telemetryOnError = telemetryOnError,
         _telemetryOnSuccess = telemetryOnSuccess,
         _account = Account(client),
         _connectivityClient = ConnectivityClientImpl(
+          logger: logger,
+          telemetryOnError: telemetryOnError,
+          telemetryOnSuccess: telemetryOnSuccess,
+        ),
+        _storageClient = AppwriteStorageClientImpl(
+          bucketId: bucketProfileImagesId,
+          storage: Storage(client),
           logger: logger,
           telemetryOnError: telemetryOnError,
           telemetryOnSuccess: telemetryOnSuccess,
@@ -71,11 +82,16 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
                         name: $name 
                        ''');
 
+        final imageUrl = _storageClient.getImageUrl(
+          fileId: userId,
+        );
+
         return AppwriteUser(
           userId: userId,
           email: email,
           provider: AuthProvider.email,
           name: name,
+          imageUrl: imageUrl,
         );
       },
       onError: (e, s) {
@@ -178,6 +194,9 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
         _logger?.i('''[SUCCESS] Signed in user with:
                         email: $email
                        ''');
+        final imageUrl = _storageClient.getImageUrl(
+          fileId: result.$id,
+        );
 
         return AppwriteUser(
           userId: result.$id,
@@ -185,6 +204,7 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
           name: result.name,
           provider: AuthProvider.email,
           isVerified: result.emailVerification,
+          imageUrl: imageUrl,
         );
       },
       onError: (e, s) {
@@ -478,12 +498,17 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
 
         _logger?.i('[SUCCESS] Fetched current user');
 
+        final imageUrl = _storageClient.getImageUrl(
+          fileId: result.$id,
+        );
+
         return AppwriteUser(
           userId: result.$id,
           email: result.email,
           name: result.name,
           provider: AuthProviderX.fromString(session.provider),
           isVerified: result.emailVerification,
+          imageUrl: imageUrl,
         );
       },
       onError: (e, s) {
@@ -622,12 +647,17 @@ class AppwriteAuthClientImpl implements AppwriteAuthClient {
                         name: ${result.name} 
                        ''');
 
+        final imageUrl = _storageClient.getImageUrl(
+          fileId: result.$id,
+        );
+
         return AppwriteUser(
           userId: result.$id,
           email: result.email,
           name: result.name,
           provider: AuthProvider.google,
           isVerified: result.emailVerification,
+          imageUrl: imageUrl,
         );
       },
       onError: (e, s) {
